@@ -1,0 +1,22 @@
+{
+  "name": "correo-gmail-con-node-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/local-auth": "^3.0.1",
+    "adm-zip": "^0.5.17",
+    "axios": "^1.16.0",
+    "dotenv": "^17.4.2",
+    "form-data": "^4.0.5",
+    "googleapis": "^126.0.1",
+    "node-cron": "^4.2.1",
+    "open": "^11.0.0"
+  }
+}
