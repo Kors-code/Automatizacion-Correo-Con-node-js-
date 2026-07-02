@@ -18,6 +18,9 @@ const DEFAULT_ONEDRIVE_SALES_FOLDER = "Documents/test/ventas";
 const SERVER_LOG_DIR = path.join(__dirname, "storage", "server-logs");
 const STATE_WRITE_RETRIES = 5;
 const STATE_WRITE_RETRY_MS = 500;
+const CATALOG_CONTINUE_ON_FAILURE =
+  String(process.env.CATALOG_CONTINUE_ON_FAILURE || "true").toLowerCase() ===
+  "true";
 let activeRun = false;
 
 function sleep(ms) {
@@ -358,10 +361,16 @@ async function runOnce() {
     }
 
     if (!importCompleted) {
-      console.log(
-        "La importacion no se completo. El correo no se marca como procesado para reintentar en el proximo ciclo."
-      );
-      return;
+      if (result.rule.reportType === "CATALOG" && CATALOG_CONTINUE_ON_FAILURE) {
+        console.log(
+          "El catalogo no se completo. Se marca como procesado para no bloquear ventas e inventario; revisa el log guardado."
+        );
+      } else {
+        console.log(
+          "La importacion no se completo. El correo no se marca como procesado para reintentar en el proximo ciclo."
+        );
+        return;
+      }
     }
   }
 
