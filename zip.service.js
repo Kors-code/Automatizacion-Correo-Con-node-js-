@@ -5,10 +5,25 @@ const AdmZip = require("adm-zip");
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
+
 const FINAL_PATHS = {
-  DFP: "C:\\Sells\\DFP",
-  LDC: "C:\\Sells\\LDC"
+  SALES: {
+    DFP: "C:\\Sells\\DFP",
+    LDC: "C:\\Sells\\LDC",
+  },
+  INVENTORY: {
+    DFP: "C:\\Sells\\Inventory\\DFP",
+    LDC: "C:\\Sells\\Inventory\\LDC",
+    ZF: "C:\\Sells\\Inventory\\ZF",
+    DEFAULT: "C:\\Sells\\Inventory",
+  },
+  CATALOG: {
+    DFP: "C:\\Sells\\Catalog\\DFP",
+    LDC: "C:\\Sells\\Catalog\\LDC",
+    DEFAULT: "C:\\Sells\\Catalog",
+  },
 };
+
 function getMonthNameES(monthIndex) {
   const months = [
     "Enero",
@@ -28,11 +43,11 @@ function getMonthNameES(monthIndex) {
   return months[monthIndex];
 }
 
-function buildFinalExcelName(type, date = new Date()) {
+function buildFinalExcelName(reportType, company, date = new Date()) {
   const monthName = getMonthNameES(date.getMonth());
   const year = date.getFullYear();
 
-  return `SALES ${type} COLOMBIA ${monthName} ${year}.xlsx`;
+  return `${reportType} ${company} COLOMBIA ${monthName} ${year}.xlsx`;
 }
 
 function unzipFile(zipPath) {
@@ -82,7 +97,23 @@ function findExcelFile(folderPath) {
   );
 }
 
-function processZipAndExtractExcel(zipPath, type, date = new Date()) {
+function resolveFinalDir(reportType, ruleType = null, company = null) {
+  const normalizedReportType = String(reportType || "").toUpperCase();
+  const normalizedCompany = String(company || ruleType || "").toUpperCase();
+
+  if (FINAL_PATHS[normalizedReportType]) {
+    const byCompany = FINAL_PATHS[normalizedReportType][normalizedCompany];
+    if (byCompany) {
+      return byCompany;
+    }
+
+    return FINAL_PATHS[normalizedReportType].DEFAULT || null;
+  }
+
+  return null;
+}
+
+function processZipAndExtractExcel(zipPath, reportType, date = new Date(), company = null, ruleType = null) {
   const extractedFolder = unzipFile(zipPath);
   const excelFile = findExcelFile(extractedFolder);
 
@@ -95,15 +126,19 @@ function processZipAndExtractExcel(zipPath, type, date = new Date()) {
     };
   }
 
-const finalDir = FINAL_PATHS[type];
+  const finalDir = resolveFinalDir(reportType, ruleType, company);
 
-if (!finalDir) {
-  throw new Error(`No existe ruta configurada para tipo ${type}`);
-}
+  if (!finalDir) {
+    throw new Error(`No existe ruta configurada para tipo ${reportType}`);
+  }
 
-fs.mkdirSync(finalDir, { recursive: true });
+  fs.mkdirSync(finalDir, { recursive: true });
 
-  const finalName = buildFinalExcelName(type, date);
+  const finalName = buildFinalExcelName(
+    reportType,
+    company,
+    date
+  );
   const finalPath = path.join(finalDir, finalName);
 
   fs.copyFileSync(excelFile, finalPath);

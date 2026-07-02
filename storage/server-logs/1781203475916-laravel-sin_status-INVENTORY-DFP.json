@@ -1,0 +1,19 @@
+{
+  "createdAt": "2026-06-11T18:44:35.916Z",
+  "service": "laravel",
+  "status": null,
+  "message": "read ECONNRESET",
+  "code": "ECONNRESET",
+  "context": {
+    "subject": "INVENTARIO COLB1",
+    "messageId": "19eb06a7ca20558d",
+    "reportType": "INVENTORY",
+    "company": "DFP",
+    "ruleKey": "COLB1",
+    "excelPath": "C:\\Sells\\Inventory\\DFP\\INVENTORY DFP COLOMBIA Junio 2026.xlsx"
+  },
+  "response": {
+    "headers": null,
+    "data": null
+  }
+}

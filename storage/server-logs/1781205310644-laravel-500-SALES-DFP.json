@@ -1,0 +1,43 @@
+{
+  "createdAt": "2026-06-11T19:15:10.644Z",
+  "service": "laravel",
+  "status": 500,
+  "message": "Request failed with status code 500",
+  "code": "ERR_BAD_RESPONSE",
+  "context": {
+    "subject": "REPORTE VENTAS 75 DFP",
+    "messageId": "19eb81b92cf59cda",
+    "reportType": "SALES",
+    "company": "DFP",
+    "ruleKey": "VENTAS_DFP",
+    "excelPath": "C:\\Sells\\DFP\\SALES DFP COLOMBIA Junio 2026.xlsx"
+  },
+  "response": {
+    "headers": {
+      "date": "Thu, 11 Jun 2026 19:15:10 GMT",
+      "content-type": "application/json",
+      "content-length": "37",
+      "connection": "keep-alive",
+      "cache-control": "no-store, no-cache, must-revalidate, max-age=0",
+      "access-control-allow-origin": "*",
+      "platform": "hostinger",
+      "panel": "hpanel",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;",
+      "x-content-type-options": "nosniff",
+      "x-xss-protection": "1; mode=block",
+      "x-frame-options": "DENY",
+      "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "edit": "Set-Cookie ^(.*)$ \"$1; HttpOnly; Secure; SameSite=Lax\"",
+      "permissions-policy": "geolocation=(), camera=(), microphone=(), fullscreen=(self), payment=()",
+      "pragma": "no-cache",
+      "expires": "0",
+      "server": "hcdn",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "x-hcdn-request-id": "9c9946c0fb8e98c5c56bbcd5bd03bdd8-phx-edge5"
+    },
+    "data": {
+      "message": "Server Error"
+    }
+  }
+}

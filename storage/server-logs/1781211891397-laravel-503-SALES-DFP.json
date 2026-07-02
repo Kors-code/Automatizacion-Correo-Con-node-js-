@@ -1,0 +1,40 @@
+{
+  "createdAt": "2026-06-11T21:04:51.388Z",
+  "service": "laravel",
+  "status": 503,
+  "message": "Request failed with status code 503",
+  "code": "ERR_BAD_RESPONSE",
+  "context": {
+    "subject": "REPORTE VENTAS 75 DFP",
+    "messageId": "19eb84d8554b0c2f",
+    "reportType": "SALES",
+    "company": "DFP",
+    "ruleKey": "VENTAS_DFP",
+    "excelPath": "C:\\Sells\\DFP\\SALES DFP COLOMBIA Junio 2026.xlsx"
+  },
+  "response": {
+    "headers": {
+      "date": "Thu, 11 Jun 2026 21:04:51 GMT",
+      "content-type": "text/html",
+      "content-length": "807",
+      "connection": "keep-alive",
+      "cache-control": "no-store, no-cache, must-revalidate, max-age=0",
+      "pragma": "no-cache",
+      "platform": "hostinger",
+      "panel": "hpanel",
+      "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; upgrade-insecure-requests;",
+      "x-content-type-options": "nosniff",
+      "x-xss-protection": "1; mode=block",
+      "x-frame-options": "DENY",
+      "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "edit": "Set-Cookie ^(.*)$ \"$1; HttpOnly; Secure; SameSite=Lax\"",
+      "permissions-policy": "geolocation=(), camera=(), microphone=(), fullscreen=(self), payment=()",
+      "expires": "0",
+      "server": "hcdn",
+      "alt-svc": "h3=\":443\"; ma=86400",
+      "x-hcdn-request-id": "76ce7a58b3d32ac317a661f1a1c6230e-phx-edge7"
+    },
+    "data": "<!DOCTYPE html>\n<html style=\"height:100%\">\n<head>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" />\n<title> 503 Service Unavailable\r\n</title><style>@media (prefers-color-scheme:dark){body{background-color:#000!important}}</style></head>\n<body style=\"color: #444; margin:0;font: normal 14px/20px Arial, Helvetica, sans-serif; height:100%; background-color: #fff;\">\n<div style=\"height:auto; min-height:100%; \">     <div style=\"text-align: center; width:800px; margin-left: -400px; position:absolute; top: 30%; left:50%;\">\n        <h1 style=\"margin:0; font-size:150px; line-height:150px; font-weight:bold;\">503</h1>\n<h2 style=\"margin-top:20px;font-size: 30px;\">Service Unavailable\r\n</h2>\n<p>The server is temporarily busy, try again later!</p>\n</div></div></body></html>\n"
+  }
+}
