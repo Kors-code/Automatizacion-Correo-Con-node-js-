@@ -16,7 +16,13 @@ const LOCK_PATH = path.join(STATE_DIR, "import.lock.json");
 const STALE_LOCK_MS = 1000 * 60 * 30;
 const DEFAULT_ONEDRIVE_SALES_FOLDER = "Documents/test/ventas";
 const SERVER_LOG_DIR = path.join(__dirname, "storage", "server-logs");
+const STATE_WRITE_RETRIES = 5;
+const STATE_WRITE_RETRY_MS = 500;
 let activeRun = false;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 function ensureState() {
   fs.mkdirSync(STATE_DIR, { recursive: true });
@@ -34,8 +40,62 @@ function loadProcessed() {
   }
 }
 
-function saveProcessed(list) {
-  fs.writeFileSync(PROCESSED_PATH, JSON.stringify(list, null, 2));
+function writeProcessedFile(list) {
+  fs.mkdirSync(STATE_DIR, { recursive: true });
+
+  const payload = JSON.stringify(list, null, 2);
+  const tempPath = `${PROCESSED_PATH}.${process.pid}.tmp`;
+
+  if (fs.existsSync(PROCESSED_PATH)) {
+    try {
+      fs.chmodSync(PROCESSED_PATH, 0o666);
+    } catch {
+      // Windows puede negar chmod si otro proceso tiene el archivo abierto.
+    }
+  }
+
+  fs.writeFileSync(tempPath, payload);
+
+  try {
+    fs.renameSync(tempPath, PROCESSED_PATH);
+  } catch (error) {
+    if (error.code !== "EEXIST" && error.code !== "EPERM") {
+      throw error;
+    }
+
+    if (fs.existsSync(PROCESSED_PATH)) {
+      fs.unlinkSync(PROCESSED_PATH);
+    }
+
+    fs.renameSync(tempPath, PROCESSED_PATH);
+  }
+}
+
+async function saveProcessed(list) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= STATE_WRITE_RETRIES; attempt += 1) {
+    try {
+      writeProcessedFile(list);
+      return;
+    } catch (error) {
+      lastError = error;
+
+      if (!["EPERM", "EACCES", "EBUSY"].includes(error.code)) {
+        throw error;
+      }
+
+      console.error(
+        `No se pudo escribir processed.json intento ${attempt}/${STATE_WRITE_RETRIES}: ${error.code}`
+      );
+
+      if (attempt < STATE_WRITE_RETRIES) {
+        await sleep(STATE_WRITE_RETRY_MS * attempt);
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 function sanitizeLogName(value) {
@@ -306,7 +366,7 @@ async function runOnce() {
   }
 
   processed.push(result.messageId);
-  saveProcessed(processed);
+  await saveProcessed(processed);
 }
 
 async function runSafely() {
