@@ -326,6 +326,8 @@ async function getRecentZipMessage(auth, processedIds = []) {
     return null;
   }
 
+  let fallbackMatch = null;
+
   for (const msg of messages) {
     if (processedIds.includes(msg.id)) {
       continue;
@@ -378,7 +380,7 @@ async function getRecentZipMessage(auth, processedIds = []) {
       continue;
     }
 
-    return {
+    const candidate = {
       gmail,
       messageId: msg.id,
       threadId: msg.threadId,
@@ -389,9 +391,15 @@ async function getRecentZipMessage(auth, processedIds = []) {
       rule: matchedRule,
       attachment: zipAttachment,
     };
+
+    if (matchedRule.reportType === "CATALOG") {
+      return candidate;
+    }
+
+    fallbackMatch ??= candidate;
   }
 
-  return null;
+  return fallbackMatch;
 }
 
 async function downloadAttachment(gmail, messageId, attachmentId, outputPath) {

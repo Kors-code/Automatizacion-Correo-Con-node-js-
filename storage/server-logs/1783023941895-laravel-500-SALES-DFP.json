@@ -1,0 +1,382 @@
+{
+  "createdAt": "2026-07-02T20:25:41.895Z",
+  "service": "laravel",
+  "status": 500,
+  "message": "Request failed with status code 500",
+  "code": "ERR_BAD_RESPONSE",
+  "context": {
+    "subject": "REPORTE VENTAS 75 DFP",
+    "messageId": "19f246b4cc471025",
+    "reportType": "SALES",
+    "company": "DFP",
+    "ruleKey": "VENTAS_DFP",
+    "excelPath": "C:\\Sells\\DFP\\SALES DFP COLOMBIA Julio 2026.xlsx"
+  },
+  "response": {
+    "headers": {
+      "host": "127.0.0.1:8000",
+      "connection": "close",
+      "x-powered-by": "PHP/8.3.16",
+      "cache-control": "no-cache, private",
+      "date": "Thu, 02 Jul 2026 20:25:41 GMT",
+      "content-type": "application/json",
+      "access-control-allow-origin": "*"
+    },
+    "data": {
+      "message": "SQLSTATE[HY000] [2002] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión (Connection: budget, SQL: select * from `import_batches` where `filename` LIKE %DFP% and `filename` LIKE %SALES% and `filename` LIKE %Julio% and `filename` LIKE %2026%)",
+      "exception": "Illuminate\\Database\\QueryException",
+      "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+      "line": 822,
+      "trace": [
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+          "line": 776,
+          "function": "runQueryCallback",
+          "class": "Illuminate\\Database\\Connection",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Connection.php",
+          "line": 395,
+          "function": "run",
+          "class": "Illuminate\\Database\\Connection",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php",
+          "line": 3131,
+          "function": "select",
+          "class": "Illuminate\\Database\\Connection",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php",
+          "line": 3116,
+          "function": "runSelect",
+          "class": "Illuminate\\Database\\Query\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php",
+          "line": 3706,
+          "function": "Illuminate\\Database\\Query\\{closure}",
+          "class": "Illuminate\\Database\\Query\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Query\\Builder.php",
+          "line": 3115,
+          "function": "onceWithColumns",
+          "class": "Illuminate\\Database\\Query\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Builder.php",
+          "line": 872,
+          "function": "get",
+          "class": "Illuminate\\Database\\Query\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Database\\Eloquent\\Builder.php",
+          "line": 854,
+          "function": "getModels",
+          "class": "Illuminate\\Database\\Eloquent\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\app\\Http\\Controllers\\ImportSalesController.php",
+          "line": 60,
+          "function": "get",
+          "class": "Illuminate\\Database\\Eloquent\\Builder",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\app\\Http\\Controllers\\ImportSalesController.php",
+          "line": 1361,
+          "function": "deletePreviousBatch",
+          "class": "App\\Http\\Controllers\\ImportSalesController",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\app\\Http\\Controllers\\ImportSalesController.php",
+          "line": 1884,
+          "function": "startChunked",
+          "class": "App\\Http\\Controllers\\ImportSalesController",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php",
+          "line": 54,
+          "function": "importAutomation",
+          "class": "App\\Http\\Controllers\\ImportSalesController",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php",
+          "line": 43,
+          "function": "callAction",
+          "class": "Illuminate\\Routing\\Controller",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+          "line": 265,
+          "function": "dispatch",
+          "class": "Illuminate\\Routing\\ControllerDispatcher",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+          "line": 211,
+          "function": "runController",
+          "class": "Illuminate\\Routing\\Route",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+          "line": 808,
+          "function": "run",
+          "class": "Illuminate\\Routing\\Route",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 169,
+          "function": "Illuminate\\Routing\\{closure}",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php",
+          "line": 50,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 126,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+          "line": 807,
+          "function": "then",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+          "line": 786,
+          "function": "runRouteWithinStack",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+          "line": 750,
+          "function": "runRoute",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+          "line": 739,
+          "function": "dispatchToRoute",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+          "line": 200,
+          "function": "dispatch",
+          "class": "Illuminate\\Routing\\Router",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 169,
+          "function": "Illuminate\\Foundation\\Http\\{closure}",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+          "line": 21,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php",
+          "line": 31,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+          "line": 21,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php",
+          "line": 51,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php",
+          "line": 27,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Http\\Middleware\\ValidatePostSize",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php",
+          "line": 109,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php",
+          "line": 61,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Http\\Middleware\\HandleCors",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php",
+          "line": 58,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Http\\Middleware\\TrustProxies",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks.php",
+          "line": 22,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePathEncoding.php",
+          "line": 26,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 208,
+          "function": "handle",
+          "class": "Illuminate\\Http\\Middleware\\ValidatePathEncoding",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+          "line": 126,
+          "function": "Illuminate\\Pipeline\\{closure}",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+          "line": 175,
+          "function": "then",
+          "class": "Illuminate\\Pipeline\\Pipeline",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+          "line": 144,
+          "function": "sendRequestThroughRouter",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php",
+          "line": 1219,
+          "function": "handle",
+          "class": "Illuminate\\Foundation\\Http\\Kernel",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\public\\index.php",
+          "line": 20,
+          "function": "handleRequest",
+          "class": "Illuminate\\Foundation\\Application",
+          "type": "->"
+        },
+        {
+          "file": "C:\\Users\\Usuario\\Documents\\Codex\\2026-05-25\\ya-maso-menos-sabes-como-manejo\\Portal Sky Fre Shop\\Backend\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php",
+          "line": 23,
+          "function": "require_once"
+        }
+      ]
+    }
+  }
+}
