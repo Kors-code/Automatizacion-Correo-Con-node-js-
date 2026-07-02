@@ -68,10 +68,41 @@ function buildSalesChunkUrl() {
 }
 
 function buildCatalogImportUrl() {
-  return (
+  const startUrl = process.env.LARAVEL_CATALOG_IMPORT_START_URL;
+
+  if (startUrl) {
+    return startUrl;
+  }
+
+  const baseUrl =
     process.env.LARAVEL_CATALOG_IMPORT_URL ||
-    "http://127.0.0.1:8000/api/automation/import-product-catalog"
-  );
+    "http://127.0.0.1:8000/api/automation/import-catalog";
+
+  const normalized = baseUrl.replace(/\/+$/, "");
+
+  return normalized.endsWith("/start") ? normalized : normalized + "/start";
+}
+
+function buildCatalogChunkUrl() {
+  const chunkUrl = process.env.LARAVEL_CATALOG_IMPORT_CHUNK_URL;
+
+  if (chunkUrl) {
+    return chunkUrl;
+  }
+
+  const baseUrl =
+    process.env.LARAVEL_CATALOG_IMPORT_URL ||
+    "http://127.0.0.1:8000/api/automation/import-catalog";
+
+  const normalized = baseUrl.replace(/\/+$/, "");
+
+  if (normalized.endsWith("/chunk")) {
+    return normalized;
+  }
+
+  return normalized.endsWith("/start")
+    ? normalized.replace(/\/start$/, "/chunk")
+    : normalized + "/chunk";
 }
 
 function buildAutomationHeaders(extraHeaders = {}) {
@@ -136,7 +167,7 @@ async function uploadSalesExcelToLaravel(localPath, storeId) {
 }
 
 async function uploadCatalogExcelToLaravel(localPath) {
-  const response = await withLaravelRetry("Laravel catalogo", async () => {
+  const response = await withLaravelRetry("Laravel catalogo inicio", async () => {
     const form = new FormData();
 
     form.append("file", fs.createReadStream(localPath), {
@@ -156,7 +187,7 @@ async function uploadCatalogExcelToLaravel(localPath) {
     });
   });
 
-  return response.data;
+  return processCatalogChunks(response.data);
 }
 
 async function processSalesChunks(initialState) {
@@ -210,6 +241,71 @@ async function processSalesChunks(initialState) {
   }
 
   return state;
+}
+
+async function processCatalogChunks(initialState) {
+  if (!initialState || initialState.done || !initialState.path) {
+    return initialState;
+  }
+
+  const chunkUrl = buildCatalogChunkUrl();
+  const chunkSize = Number(
+    process.env.LARAVEL_CATALOG_IMPORT_CHUNK_SIZE ||
+      initialState.chunk_size ||
+      100
+  );
+  let state = initialState;
+  let chunkNumber = 0;
+  let totalProcessedRows = 0;
+  const summaries = [];
+
+  while (!state.done) {
+    chunkNumber += 1;
+
+    console.log(
+      `Procesando chunk catalogo #${chunkNumber}: fila ${state.next_row} de ${state.total_rows}`
+    );
+
+    const response = await withLaravelRetry(
+      `Laravel catalogo chunk #${chunkNumber}`,
+      async () =>
+        axios.post(
+          chunkUrl,
+          {
+            path: state.path,
+            next_row: state.next_row,
+            total_rows: state.total_rows,
+            chunk_size: chunkSize,
+          },
+          {
+            headers: buildAutomationHeaders({
+              Accept: "application/json",
+            }),
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity,
+            timeout: 1000 * 60 * 3,
+          }
+        )
+    );
+
+    state = {
+      ...state,
+      ...response.data,
+    };
+    totalProcessedRows += Number(response.data.processed_rows || 0);
+    summaries.push(response.data.summary || {});
+
+    console.log(
+      `Chunk catalogo OK: procesadas ${response.data.processed_rows || 0}, siguiente ${state.next_row}, done=${state.done}`
+    );
+  }
+
+  return {
+    ...state,
+    total_processed_rows: totalProcessedRows,
+    chunk_count: chunkNumber,
+    summaries,
+  };
 }
 module.exports = {
   uploadInventoryExcelToLaravel,
