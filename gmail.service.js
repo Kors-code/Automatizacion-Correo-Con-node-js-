@@ -8,6 +8,12 @@ const TOKEN_PATH = path.join(__dirname, "token.json");
 
 const SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"];
 const allowedSender = "reportes@skyfreeshop.org";
+const ONEDRIVE_INVENTORY_COL_FOLDER =
+  "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Logistic/INVENTORY/Inventory COL";
+const ONEDRIVE_INVENTORY_MEX_FOLDER =
+  "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Logistic/INVENTORY/Inventory MEX";
+const ONEDRIVE_INVENTORY_USA_FOLDER =
+  "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Logistic/INVENTORY/Inventory USA";
 
 // Reglas de clasificación
 const FILTER_RULES = [
@@ -22,6 +28,30 @@ const FILTER_RULES = [
   },
 
   {
+    key: "FINAL_DFP",
+    name: "reporte-75-dfp-final",
+    matchText: "ventas final 75 dfp",
+    folder: "dfp",
+    company: "DFP",
+    type: "SALES",
+    keywords: ["FINAL", "VENTAS", "75", "DFP"],
+    reportType: "SALES",
+    mode: "FINAL_MONTH",
+    oneDriveOnly: true,
+  },
+  {
+    key: "FINAL_LDC",
+    name: "reporte-75-ldc-final",
+    matchText: "ventas final 75 ldc",
+    folder: "ldc",
+    company: "LDC",
+    type: "SALES",
+    keywords: ["FINAL", "VENTAS", "75", "LDC"],
+    reportType: "SALES",
+    mode: "FINAL_MONTH",
+    oneDriveOnly: true,
+  },
+  {
     key: "VENTAS_DFP",
     name: "reporte-75-dfp",
     matchText: "reporte ventas 75 dfp",
@@ -31,39 +61,6 @@ const FILTER_RULES = [
     keywords: ["REPORTE", "VENTAS", "75", "DFP"],
     reportType: "SALES",
   },
-{
-  key: "FINAL_DFP",
-  name: "reporte-75-dfp-final",
-  matchText: "ventas final 75 dfp",
-  folder: "dfp",
-  company: "DFP",
-  type: "SALES",
-  keywords: ["FINAL", "VENTAS", "75", "DFP"],
-  reportType: "SALES",
-  mode: "FINAL_MONTH",
-},
-{
-  key: "FINAL_DFP",
-  name: "reporte-75-dfp-final",
-  matchText: "ventas final 75 dfp",
-  folder: "dfp",
-  company: "DFP",
-  type: "SALES",
-  keywords: ["FINAL", "VENTAS", "75", "DFP"],
-  reportType: "SALES",
-  mode: "FINAL_MONTH",
-},
-{
-  key: "FINAL_LDC",
-  name: "reporte-75-ldc-final",
-  matchText: "ventas final 75 ldc",
-  folder: "ldc",
-  company: "LDC",
-  type: "SALES",
-  keywords: ["FINAL", "VENTAS", "75", "LDC"],
-  reportType: "SALES",
-  mode: "FINAL_MONTH",
-},
 
   {
     key: "VENTAS_LDC",
@@ -74,6 +71,151 @@ const FILTER_RULES = [
     type: "SALES",
     keywords: ["REPORTE", "VENTAS", "75", "LDC"],
     reportType: "SALES",
+  },
+  {
+    key: "INV_MDE_CON_ZF",
+    name: "Inventory DFP Medellin con ZF",
+    matchText: "INV MDE CON ZF",
+    folder: "dfp_mde_con_zf",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Medellin con ZF`,
+    oneDriveFilePattern: "INVENTORY MDE CON ZF DFP {Month} {Year}.xlsx",
+    storeColumnValue: "DFP MDE CON ZF",
+  },
+  {
+    key: "INVZFMDE",
+    name: "Inventory DFP Zona franca Medellin",
+    matchText: "INVZFMDE",
+    folder: "dfp_zf_mde",
+    company: "DFP",
+    type: "BODEGA",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Zona franca Medellin`,
+    oneDriveFilePattern: "INVENTORY ZF MDE DFP {Month} {Year}.xlsx",
+    storeColumnValue: "ZF MDE DFP",
+  },
+  {
+    key: "INVLDCCALI",
+    name: "Inventory LDC Cali",
+    matchText: "INVLDCCALI",
+    folder: "ldc_cali_onedrive",
+    company: "LDC",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory LDC Cali`,
+    oneDriveFilePattern: "INVENTORY LDC Cali {Month} {Year}.xlsx",
+    storeColumnValue: "LDC CALI",
+  },
+  {
+    key: "INVLDCMDE",
+    name: "Inventory LDC Medellin",
+    matchText: "INVLDCMDE",
+    folder: "ldc_mde_onedrive",
+    company: "LDC",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory LDC Medellin`,
+    oneDriveFilePattern: "INVENTORY LDC MDE {Month} {Year}.xlsx",
+    storeColumnValue: "LDC MDE",
+  },
+  {
+    key: "INVLDCZF",
+    name: "Inventory LDC Zona franca Medellin",
+    matchText: "INVLDCZF",
+    folder: "ldc_zf_mde_onedrive",
+    company: "LDC",
+    type: "BODEGA",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory LDC Zona franca Medellin`,
+    oneDriveFilePattern: "INVENTORY ZF LDC MDE {Month} {Year}.xlsx",
+    storeColumnValue: "ZF MDE LDC",
+  },
+  {
+    key: "INV_CTG",
+    name: "Inventory DFP Cartagena",
+    matchText: "INV CTG",
+    folder: "dfp_cartagena_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Cartagena`,
+    oneDriveFilePattern: "INVENTORY CTG DFP {Month} {Year}.xlsx",
+    storeColumnValue: "DFP CTG",
+  },
+  {
+    key: "INV_MDE",
+    name: "Inventory DFP Medellin",
+    matchText: "INV MDE",
+    folder: "dfp_mde_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Medellin`,
+    oneDriveFilePattern: "INVENTORY MDE DFP {Month} {Year}.xlsx",
+    storeColumnValue: "DFP MDE",
+  },
+  {
+    key: "DFP_ALFA",
+    name: "Inventory DFP Alfa",
+    matchText: "DFP ALFA",
+    matchTexts: ["DFP ALFA", "INV ALFA"],
+    folder: "dfp_alfa_mex_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_MEX_FOLDER}/Inventory DFP Alfa`,
+    oneDriveFilePattern: "INVENTORY DFP Alfa {Month} {Year}.xlsx",
+    storeColumnValue: "DFP ALFA",
+  },
+  {
+    key: "DFP_BRAVO",
+    name: "Inventory DFP Bravo",
+    matchText: "DFP BRAVO",
+    matchTexts: ["DFP BRAVO", "INV BRAVO"],
+    folder: "dfp_bravo_mex_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_MEX_FOLDER}/Inventory DFP Bravo`,
+    oneDriveFilePattern: "INVENTORY DFP Bravo {Month} {Year}.xlsx",
+    storeColumnValue: "DFP BRAVO",
+  },
+  {
+    key: "DFP_CABOS",
+    name: "Inventory DFP Cabos",
+    matchText: "DFP CABOS",
+    folder: "dfp_cabos_mex_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_MEX_FOLDER}/Inventory DFP Cabos`,
+    oneDriveFilePattern: "INVENTORY DFP Cabos {Month} {Year}.xlsx",
+    storeColumnValue: "DFP CABOS",
+  },
+  {
+    key: "INV_SANDIEGO",
+    name: "Inventory DFP San Diego DF",
+    matchText: "INV SANDIEGO",
+    folder: "dfp_san_diego_usa_onedrive",
+    company: "DFP",
+    type: "STORE",
+    reportType: "INVENTORY",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_INVENTORY_USA_FOLDER}/Inventory DFP San Diego DF`,
+    oneDriveFilePattern: "INVENTORY DFP San Diego {Month} {Year}.xlsx",
+    storeColumnValue: "San Diego DF",
   },
    {
     key: "COLS1",
@@ -309,6 +451,15 @@ function getMatchedRule(subject, bodyText) {
     }
 
     // 2. Buscar por matchText
+    if (
+      Array.isArray(rule.matchTexts) &&
+      rule.matchTexts.some((matchText) =>
+        haystack.includes(String(matchText).toUpperCase())
+      )
+    ) {
+      return rule;
+    }
+
     if (
       rule.matchText &&
       haystack.includes(rule.matchText.toUpperCase())

@@ -3,6 +3,7 @@ const path = require("path");
 const cron = require("node-cron");
 const { downloadLatestZip } = require("./gmail.service");
 const { processZipAndExtractExcel } = require("./zip.service");
+const { fillStoreColumn } = require("./excel-store.service");
 const {
   uploadInventoryExcelToLaravel,
   uploadSalesExcelToLaravel,
@@ -22,6 +23,21 @@ const CATALOG_CONTINUE_ON_FAILURE =
   String(process.env.CATALOG_CONTINUE_ON_FAILURE || "true").toLowerCase() ===
   "true";
 let activeRun = false;
+
+const MONTHS_EN = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -240,16 +256,46 @@ function buildOneDriveSalesFolder(rule) {
   return `${baseFolder.replace(/[\\/]+$/g, "")}/${company}`;
 }
 
-async function uploadSalesToOneDrive(localPath, rule) {
-  if (rule.reportType !== "SALES") {
+function buildOneDriveFolder(rule) {
+  if (rule.oneDriveFolder) {
+    return String(rule.oneDriveFolder).replace(/[\\/]+$/g, "");
+  }
+
+  if (rule.reportType === "SALES") {
+    return buildOneDriveSalesFolder(rule);
+  }
+
+  return null;
+}
+
+function buildOneDriveFileName(localPath, rule, date = new Date()) {
+  if (!rule.oneDriveFilePattern) {
+    return path.basename(localPath);
+  }
+
+  const month = MONTHS_EN[date.getMonth()];
+  const year = String(date.getFullYear());
+
+  return String(rule.oneDriveFilePattern)
+    .replace(/\{Month\}/g, month)
+    .replace(/\{MONTH\}/g, month.toUpperCase())
+    .replace(/\{month\}/g, month.toLowerCase())
+    .replace(/\{Year\}/g, year)
+    .replace(/\{YEAR\}/g, year);
+}
+
+async function uploadReportToOneDrive(localPath, rule) {
+  const folderPath = buildOneDriveFolder(rule);
+
+  if (!folderPath) {
     return null;
   }
 
-  const fileName = path.basename(localPath);
-  const folderPath = buildOneDriveSalesFolder(rule);
+  const fileName = buildOneDriveFileName(localPath, rule);
 
-  console.log("Subiendo venta a OneDrive...");
+  console.log("Subiendo archivo a OneDrive...");
   console.log("Carpeta OneDrive:", folderPath);
+  console.log("Archivo OneDrive:", fileName);
 
   const response = await uploadToOneDrive(localPath, fileName, folderPath);
 
@@ -283,7 +329,7 @@ async function uploadToLaravelSafely(uploadFn, localPath, result) {
 
 async function uploadToOneDriveSafely(localPath, result) {
   try {
-    return await uploadSalesToOneDrive(localPath, result.rule);
+    return await uploadReportToOneDrive(localPath, result.rule);
   } catch (error) {
     writeServerErrorLog("onedrive", error, {
       subject: result.subject,
@@ -295,6 +341,18 @@ async function uploadToOneDriveSafely(localPath, result) {
     });
 
     return null;
+  }
+}
+
+function fillStoreColumnIfNeeded(localPath, rule) {
+  if (!rule.storeColumnValue) {
+    return;
+  }
+
+  const updated = fillStoreColumn(localPath, rule.storeColumnValue);
+
+  if (updated) {
+    console.log("Columna Store actualizada:", rule.storeColumnValue);
   }
 }
 
@@ -324,30 +382,52 @@ async function runOnce() {
 
   if (finalExcel.finalPath) {
     console.log("Excel final:", finalExcel.finalPath);
+    fillStoreColumnIfNeeded(finalExcel.finalPath, result.rule);
+
     let importCompleted = false;
 
     if (result.rule.reportType === "INVENTORY") {
       console.log("Procesando INVENTARIO...");
-      const laravelResponse = await uploadToLaravelSafely(
-        () =>
-          uploadInventoryExcelToLaravel(finalExcel.finalPath, result.rule.storeId),
-        finalExcel.finalPath,
-        result
-      );
+      if (result.rule.oneDriveOnly) {
+        console.log("Regla configurada solo para OneDrive. Se omite Laravel.");
+        const oneDriveResponse = await uploadToOneDriveSafely(
+          finalExcel.finalPath,
+          result
+        );
 
-      importCompleted = Boolean(laravelResponse);
+        importCompleted = Boolean(oneDriveResponse);
+      } else {
+        const laravelResponse = await uploadToLaravelSafely(
+          () =>
+            uploadInventoryExcelToLaravel(finalExcel.finalPath, result.rule.storeId),
+          finalExcel.finalPath,
+          result
+        );
+
+        importCompleted = Boolean(laravelResponse);
+      }
     } else if (result.rule.reportType === "SALES") {
       console.log("Procesando VENTAS...");
-      const laravelResponse = await uploadToLaravelSafely(
-        () => uploadSalesExcelToLaravel(finalExcel.finalPath, result.rule.storeId),
-        finalExcel.finalPath,
-        result
-      );
-      const oneDriveResponse = laravelResponse
-        ? await uploadToOneDriveSafely(finalExcel.finalPath, result)
-        : null;
+      if (result.rule.oneDriveOnly) {
+        console.log("Regla configurada solo para OneDrive. Se omite Laravel.");
+        const oneDriveResponse = await uploadToOneDriveSafely(
+          finalExcel.finalPath,
+          result
+        );
 
-      importCompleted = Boolean(laravelResponse && oneDriveResponse);
+        importCompleted = Boolean(oneDriveResponse);
+      } else {
+        const laravelResponse = await uploadToLaravelSafely(
+          () => uploadSalesExcelToLaravel(finalExcel.finalPath, result.rule.storeId),
+          finalExcel.finalPath,
+          result
+        );
+        const oneDriveResponse = laravelResponse
+          ? await uploadToOneDriveSafely(finalExcel.finalPath, result)
+          : null;
+
+        importCompleted = Boolean(laravelResponse && oneDriveResponse);
+      }
     } else if (result.rule.reportType === "CATALOG") {
       console.log("Procesando CATALOGO...");
       const laravelResponse = await uploadToLaravelSafely(
