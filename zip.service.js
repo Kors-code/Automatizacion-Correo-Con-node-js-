@@ -113,7 +113,8 @@ function resolveFinalDir(reportType, ruleType = null, company = null) {
   return null;
 }
 
-function processZipAndExtractExcel(zipPath, reportType, date = new Date(), company = null, ruleType = null) {
+function processZipAndExtractExcel(zipPath, reportType, date = new Date(), company = null, ruleType = null
+, mode = null) {
   const extractedFolder = unzipFile(zipPath);
   const excelFile = findExcelFile(extractedFolder);
 
@@ -137,7 +138,8 @@ function processZipAndExtractExcel(zipPath, reportType, date = new Date(), compa
   const finalName = buildFinalExcelName(
     reportType,
     company,
-    date
+    date,
+    mode
   );
   const finalPath = path.join(finalDir, finalName);
 
@@ -151,6 +153,18 @@ function processZipAndExtractExcel(zipPath, reportType, date = new Date(), compa
     excelFile,
     finalPath,
   };
+}
+function getPreviousMonthDate(date = new Date()) {
+  return new Date(date.getFullYear(), date.getMonth() - 1, 1);
+}
+
+function buildFinalExcelName(reportType, company, date = new Date(), mode = null) {
+  const targetDate = mode === "FINAL_MONTH" ? getPreviousMonthDate(date) : date;
+  const monthName = getMonthNameES(targetDate.getMonth());
+  const year = targetDate.getFullYear();
+  const suffix = mode === "FINAL_MONTH" ? " FINAL" : "";
+
+  return `${reportType} ${company} COLOMBIA ${monthName} ${year}${suffix}.xlsx`;
 }
 
 module.exports = {

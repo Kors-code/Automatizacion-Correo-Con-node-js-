@@ -318,7 +318,8 @@ async function runOnce() {
     result.rule.reportType,
     new Date(),
     result.rule.company,
-    result.rule.type
+    result.rule.type,
+    result.rule.mode
   );
 
   if (finalExcel.finalPath) {
