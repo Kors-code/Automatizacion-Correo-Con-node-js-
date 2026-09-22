@@ -19,6 +19,10 @@ const DEFAULT_ONEDRIVE_SALES_FOLDER = "Documents/test/ventas";
 const SERVER_LOG_DIR = path.join(__dirname, "storage", "server-logs");
 const STATE_WRITE_RETRIES = 5;
 const STATE_WRITE_RETRY_MS = 500;
+const CLEANUP_ON_SUCCESS =
+  String(process.env.CLEANUP_ON_SUCCESS || "true").toLowerCase() === "true";
+const TEMP_RETENTION_DAYS = Number(process.env.TEMP_RETENTION_DAYS || 7);
+const LOG_RETENTION_DAYS = Number(process.env.LOG_RETENTION_DAYS || 15);
 const CATALOG_CONTINUE_ON_FAILURE =
   String(process.env.CATALOG_CONTINUE_ON_FAILURE || "true").toLowerCase() ===
   "true";
@@ -362,7 +366,68 @@ async function fillStoreColumnIfNeeded(localPath, rule) {
   }
 }
 
+function removePathSafely(targetPath) {
+  if (!targetPath) {
+    return;
+  }
+
+  const resolved = path.resolve(targetPath);
+  const projectRoot = path.resolve(__dirname);
+
+  if (!resolved.startsWith(projectRoot) && !resolved.startsWith(path.resolve(process.env.FINAL_BASE_DIR || ""))) {
+    console.log("No se limpia ruta fuera del proyecto/final base:", resolved);
+    return;
+  }
+
+  try {
+    fs.rmSync(resolved, { recursive: true, force: true });
+  } catch (error) {
+    console.error(`No se pudo limpiar ${resolved}: ${error.message}`);
+  }
+}
+
+function cleanupOldFiles(dir, maxAgeDays) {
+  if (!fs.existsSync(dir) || !Number.isFinite(maxAgeDays) || maxAgeDays <= 0) {
+    return;
+  }
+
+  const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+
+    try {
+      const stats = fs.statSync(fullPath);
+
+      if (now - stats.mtimeMs > maxAgeMs) {
+        fs.rmSync(fullPath, { recursive: true, force: true });
+      }
+    } catch (error) {
+      console.error(`No se pudo revisar/limpiar ${fullPath}: ${error.message}`);
+    }
+  }
+}
+
+function cleanupRuntimeStorage() {
+  cleanupOldFiles(path.join(__dirname, "storage", "incoming-zips"), TEMP_RETENTION_DAYS);
+  cleanupOldFiles(path.join(__dirname, "storage", "extracted"), TEMP_RETENTION_DAYS);
+  cleanupOldFiles(SERVER_LOG_DIR, LOG_RETENTION_DAYS);
+}
+
+function cleanupSuccessfulRun(result, finalExcel) {
+  if (!CLEANUP_ON_SUCCESS) {
+    return;
+  }
+
+  removePathSafely(result?.zipPath);
+  removePathSafely(finalExcel?.extractedFolder);
+  removePathSafely(finalExcel?.finalPath);
+}
+
 async function runOnce() {
+  cleanupRuntimeStorage();
+
   const processed = loadProcessed();
 
   const result = await downloadLatestZip(processed);
@@ -463,6 +528,7 @@ async function runOnce() {
 
   processed.push(result.messageId);
   await saveProcessed(processed);
+  cleanupSuccessfulRun(result, finalExcel);
 }
 
 async function runSafely() {

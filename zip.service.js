@@ -6,21 +6,33 @@ function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+function getDefaultFinalBaseDir() {
+  if (process.env.FINAL_BASE_DIR) {
+    return process.env.FINAL_BASE_DIR;
+  }
+
+  return process.platform === "win32"
+    ? "C:\\Sells"
+    : path.join(__dirname, "storage", "final");
+}
+
+const FINAL_BASE_DIR = getDefaultFinalBaseDir();
+
 const FINAL_PATHS = {
   SALES: {
-    DFP: "C:\\Sells\\DFP",
-    LDC: "C:\\Sells\\LDC",
+    DFP: path.join(FINAL_BASE_DIR, "DFP"),
+    LDC: path.join(FINAL_BASE_DIR, "LDC"),
   },
   INVENTORY: {
-    DFP: "C:\\Sells\\Inventory\\DFP",
-    LDC: "C:\\Sells\\Inventory\\LDC",
-    ZF: "C:\\Sells\\Inventory\\ZF",
-    DEFAULT: "C:\\Sells\\Inventory",
+    DFP: path.join(FINAL_BASE_DIR, "Inventory", "DFP"),
+    LDC: path.join(FINAL_BASE_DIR, "Inventory", "LDC"),
+    ZF: path.join(FINAL_BASE_DIR, "Inventory", "ZF"),
+    DEFAULT: path.join(FINAL_BASE_DIR, "Inventory"),
   },
   CATALOG: {
-    DFP: "C:\\Sells\\Catalog\\DFP",
-    LDC: "C:\\Sells\\Catalog\\LDC",
-    DEFAULT: "C:\\Sells\\Catalog",
+    DFP: path.join(FINAL_BASE_DIR, "Catalog", "DFP"),
+    LDC: path.join(FINAL_BASE_DIR, "Catalog", "LDC"),
+    DEFAULT: path.join(FINAL_BASE_DIR, "Catalog"),
   },
 };
 
