@@ -154,6 +154,7 @@ const FILTER_RULES = [
     key: "INV_MDE",
     name: "Inventory DFP Medellin",
     matchText: "INV MDE",
+    matchTexts: ["INV MDE", "INV DFP MDE"],
     folder: "dfp_mde_onedrive",
     company: "DFP",
     type: "STORE",
