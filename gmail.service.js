@@ -14,6 +14,8 @@ const ONEDRIVE_INVENTORY_MEX_FOLDER =
   "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Logistic/INVENTORY/Inventory MEX";
 const ONEDRIVE_INVENTORY_USA_FOLDER =
   "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Logistic/INVENTORY/Inventory USA";
+const ONEDRIVE_SALES_MEX_FOLDER =
+  "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Commercial/SALES/MEX";
 
 // Reglas de clasificación
 const FILTER_RULES = [
@@ -71,6 +73,30 @@ const FILTER_RULES = [
     type: "SALES",
     keywords: ["REPORTE", "VENTAS", "75", "LDC"],
     reportType: "SALES",
+  },
+  {
+    key: "SELLSBRAVO",
+    name: "Sales DFP Mexico Bravo",
+    matchText: "SELLSBRAVO",
+    folder: "dfp_mex_bravo_sales_onedrive",
+    company: "DFP",
+    type: "SALES",
+    reportType: "SALES",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_SALES_MEX_FOLDER}/BRAVO`,
+    oneDriveFilePattern: "SALES DFP MEX BRAVO {Month} {Day} {Year}.xlsx",
+  },
+  {
+    key: "ALFASELLS",
+    name: "Sales DFP Mexico Alfa",
+    matchText: "ALFASELLS",
+    folder: "dfp_mex_alfa_sales_onedrive",
+    company: "DFP",
+    type: "SALES",
+    reportType: "SALES",
+    oneDriveOnly: true,
+    oneDriveFolder: `${ONEDRIVE_SALES_MEX_FOLDER}/ALFA`,
+    oneDriveFilePattern: "SALES DFP MEX ALFA {Month} {Day} {Year}.xlsx",
   },
   {
     key: "INV_MDE_CON_ZF",

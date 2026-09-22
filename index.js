@@ -274,12 +274,16 @@ function buildOneDriveFileName(localPath, rule, date = new Date()) {
   }
 
   const month = MONTHS_EN[date.getMonth()];
+  const day = String(date.getDate());
   const year = String(date.getFullYear());
 
   return String(rule.oneDriveFilePattern)
     .replace(/\{Month\}/g, month)
     .replace(/\{MONTH\}/g, month.toUpperCase())
     .replace(/\{month\}/g, month.toLowerCase())
+    .replace(/\{Day\}/g, day)
+    .replace(/\{DAY\}/g, day)
+    .replace(/\{day\}/g, day)
     .replace(/\{Year\}/g, year)
     .replace(/\{YEAR\}/g, year);
 }
