@@ -162,7 +162,7 @@ const FILTER_RULES = [
     oneDriveOnly: true,
     oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Medellin`,
     oneDriveFilePattern: "INVENTORY MDE DFP {Month} {Year}.xlsx",
-    storeColumnValue: "DFP MDE",
+    storeColumnValue: "Medellin",
   },
   {
     key: "DFP_ALFA",
