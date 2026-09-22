@@ -438,15 +438,24 @@ function extractTextFromPayload(payload) {
   return text.trim();
 }
 
+function normalizeMatchText(value) {
+  return String(value || "")
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toUpperCase();
+}
+
 function getMatchedRule(subject, bodyText) {
-  const haystack = `${subject} ${bodyText}`.toUpperCase();
+  const haystack = normalizeMatchText(`${subject} ${bodyText}`);
 
   for (const rule of FILTER_RULES) {
 
     // 1. Buscar por KEY exacta
     if (
       rule.key &&
-      haystack.includes(rule.key.toUpperCase())
+      haystack.includes(normalizeMatchText(rule.key))
     ) {
       return rule;
     }
@@ -455,7 +464,7 @@ function getMatchedRule(subject, bodyText) {
     if (
       Array.isArray(rule.matchTexts) &&
       rule.matchTexts.some((matchText) =>
-        haystack.includes(String(matchText).toUpperCase())
+        haystack.includes(normalizeMatchText(matchText))
       )
     ) {
       return rule;
@@ -463,7 +472,7 @@ function getMatchedRule(subject, bodyText) {
 
     if (
       rule.matchText &&
-      haystack.includes(rule.matchText.toUpperCase())
+      haystack.includes(normalizeMatchText(rule.matchText))
     ) {
       return rule;
     }
@@ -472,7 +481,7 @@ function getMatchedRule(subject, bodyText) {
     if (
       rule.keywords &&
       rule.keywords.every((keyword) =>
-        haystack.includes(keyword.toUpperCase())
+        haystack.includes(normalizeMatchText(keyword))
       )
     ) {
       return rule;
