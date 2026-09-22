@@ -344,15 +344,17 @@ async function uploadToOneDriveSafely(localPath, result) {
   }
 }
 
-function fillStoreColumnIfNeeded(localPath, rule) {
+async function fillStoreColumnIfNeeded(localPath, rule) {
   if (!rule.storeColumnValue) {
     return;
   }
 
-  const updated = fillStoreColumn(localPath, rule.storeColumnValue);
+  const updatedRows = await fillStoreColumn(localPath, rule.storeColumnValue);
 
-  if (updated) {
-    console.log("Columna Store actualizada:", rule.storeColumnValue);
+  if (updatedRows) {
+    console.log(
+      `Columna Store actualizada: ${rule.storeColumnValue} (${updatedRows} filas)`
+    );
   }
 }
 
@@ -382,7 +384,7 @@ async function runOnce() {
 
   if (finalExcel.finalPath) {
     console.log("Excel final:", finalExcel.finalPath);
-    fillStoreColumnIfNeeded(finalExcel.finalPath, result.rule);
+    await fillStoreColumnIfNeeded(finalExcel.finalPath, result.rule);
 
     let importCompleted = false;
 
