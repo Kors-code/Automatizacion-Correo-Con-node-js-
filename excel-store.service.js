@@ -46,11 +46,29 @@ function findStoreColumn(worksheet) {
   return null;
 }
 
-function rowHasDataOutsideStore(row, storeColumnNumber) {
+function getTodayDateOnly() {
+  const timeZone = process.env.REPORT_DATE_TIMEZONE || "America/Bogota";
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return new Date(
+    Number(values.year),
+    Number(values.month) - 1,
+    Number(values.day)
+  );
+}
+
+function rowHasDataOutsideColumns(row, ignoredColumns) {
   let hasData = false;
 
   row.eachCell({ includeEmpty: false }, (cell, colNumber) => {
-    if (colNumber === storeColumnNumber) {
+    if (ignoredColumns.has(colNumber)) {
       return;
     }
 
@@ -83,6 +101,9 @@ async function fillStoreColumn(xlsxPath, storeValue) {
   }
 
   let updatedRows = 0;
+  const dateColumnNumber = storeColumn.colNumber + 1;
+  const reportDate = getTodayDateOnly();
+  const ignoredColumns = new Set([storeColumn.colNumber, dateColumnNumber]);
 
   for (
     let rowNumber = storeColumn.rowNumber + 1;
@@ -91,11 +112,16 @@ async function fillStoreColumn(xlsxPath, storeValue) {
   ) {
     const row = worksheet.getRow(rowNumber);
 
-    if (!rowHasDataOutsideStore(row, storeColumn.colNumber)) {
+    if (!rowHasDataOutsideColumns(row, ignoredColumns)) {
       continue;
     }
 
     row.getCell(storeColumn.colNumber).value = storeValue;
+
+    const dateCell = row.getCell(dateColumnNumber);
+    dateCell.value = reportDate;
+    dateCell.numFmt = "yyyy-mm-dd";
+
     row.commit();
     updatedRows += 1;
   }

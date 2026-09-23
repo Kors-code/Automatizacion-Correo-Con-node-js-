@@ -361,7 +361,7 @@ async function fillStoreColumnIfNeeded(localPath, rule) {
 
   if (updatedRows) {
     console.log(
-      `Columna Store actualizada: ${rule.storeColumnValue} (${updatedRows} filas)`
+      `Columnas Store y fecha actualizadas: ${rule.storeColumnValue} (${updatedRows} filas)`
     );
   }
 }

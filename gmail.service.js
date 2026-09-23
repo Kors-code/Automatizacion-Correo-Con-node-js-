@@ -148,7 +148,7 @@ const FILTER_RULES = [
     oneDriveOnly: true,
     oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory LDC Medellin`,
     oneDriveFilePattern: "INVENTORY LDC MDE {Month} {Year}.xlsx",
-    storeColumnValue: "LDC MDE",
+    storeColumnValue: "LDC MEDELLIN",
   },
   {
     key: "INVLDCZF",
@@ -174,7 +174,7 @@ const FILTER_RULES = [
     oneDriveOnly: true,
     oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Cartagena`,
     oneDriveFilePattern: "INVENTORY CTG DFP {Month} {Year}.xlsx",
-    storeColumnValue: "DFP CTG",
+    storeColumnValue: "CARTAGENA",
   },
   {
     key: "INV_MDE",
@@ -188,7 +188,7 @@ const FILTER_RULES = [
     oneDriveOnly: true,
     oneDriveFolder: `${ONEDRIVE_INVENTORY_COL_FOLDER}/Inventory DFP Medellin`,
     oneDriveFilePattern: "INVENTORY MDE DFP {Month} {Year}.xlsx",
-    storeColumnValue: "Medellin",
+    storeColumnValue: "MEDELLIN",
   },
   {
     key: "DFP_ALFA",
