@@ -1,4 +1,5 @@
 const path = require("path");
+const AdmZip = require("adm-zip");
 const ExcelJS = require("exceljs");
 
 function normalizeHeader(value) {
@@ -64,6 +65,15 @@ function getTodayDateOnly() {
   );
 }
 
+function getTodayDateText() {
+  const date = getTodayDateOnly();
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function rowHasDataOutsideColumns(row, ignoredColumns) {
   let hasData = false;
 
@@ -78,6 +88,132 @@ function rowHasDataOutsideColumns(row, ignoredColumns) {
   });
 
   return hasData;
+}
+
+function columnNumberToName(columnNumber) {
+  let name = "";
+  let current = columnNumber;
+
+  while (current > 0) {
+    const remainder = (current - 1) % 26;
+    name = String.fromCharCode(65 + remainder) + name;
+    current = Math.floor((current - 1) / 26);
+  }
+
+  return name;
+}
+
+function columnNameToNumber(columnName) {
+  return String(columnName || "")
+    .toUpperCase()
+    .split("")
+    .reduce((total, letter) => total * 26 + letter.charCodeAt(0) - 64, 0);
+}
+
+function escapeXml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function getCellStyleAttribute(cellXml) {
+  const styleMatch = String(cellXml || "").match(/\ss="[^"]*"/);
+  return styleMatch ? styleMatch[0] : "";
+}
+
+function buildInlineStringCell(cellRef, value, previousCellXml = "") {
+  const style = getCellStyleAttribute(previousCellXml);
+  return `<c r="${cellRef}"${style} t="inlineStr"><is><t>${escapeXml(
+    value
+  )}</t></is></c>`;
+}
+
+function upsertCell(rowXml, rowNumber, colNumber, value) {
+  const columnName = columnNumberToName(colNumber);
+  const cellRef = `${columnName}${rowNumber}`;
+  const cellRegex = /<c\b[^>]*\br="([A-Z]+)(\d+)"[^>]*(?:\/>|>[\s\S]*?<\/c>)/g;
+  let existingCellXml = "";
+
+  const replaced = rowXml.replace(cellRegex, (cellXml, colName, cellRow) => {
+    if (colName === columnName && Number(cellRow) === rowNumber) {
+      existingCellXml = cellXml;
+      return buildInlineStringCell(cellRef, value, cellXml);
+    }
+
+    return cellXml;
+  });
+
+  if (existingCellXml) {
+    return replaced;
+  }
+
+  const newCellXml = buildInlineStringCell(cellRef, value);
+  let insertAt = -1;
+
+  replaced.replace(cellRegex, (cellXml, colName, cellRow, offset) => {
+    if (insertAt === -1 && Number(cellRow) === rowNumber) {
+      const currentColumnNumber = columnNameToNumber(colName);
+
+      if (currentColumnNumber > colNumber) {
+        insertAt = offset;
+      }
+    }
+
+    return cellXml;
+  });
+
+  if (insertAt !== -1) {
+    return `${replaced.slice(0, insertAt)}${newCellXml}${replaced.slice(
+      insertAt
+    )}`;
+  }
+
+  return replaced.replace("</row>", `${newCellXml}</row>`);
+}
+
+function updateWorksheetXml(worksheetXml, updates) {
+  return worksheetXml.replace(
+    /<row\b[^>]*\br="(\d+)"[^>]*>[\s\S]*?<\/row>/g,
+    (rowXml, rowNumberText) => {
+      const rowNumber = Number(rowNumberText);
+      const rowUpdate = updates.get(rowNumber);
+
+      if (!rowUpdate) {
+        return rowXml;
+      }
+
+      let updatedRowXml = rowXml;
+
+      for (const cellUpdate of rowUpdate) {
+        updatedRowXml = upsertCell(
+          updatedRowXml,
+          rowNumber,
+          cellUpdate.colNumber,
+          cellUpdate.value
+        );
+      }
+
+      return updatedRowXml;
+    }
+  );
+}
+
+function writeWorksheetXml(xlsxPath, updates) {
+  const zip = new AdmZip(xlsxPath);
+  const worksheetEntry = zip.getEntry("xl/worksheets/sheet1.xml");
+
+  if (!worksheetEntry) {
+    throw new Error("No se encontro xl/worksheets/sheet1.xml en el Excel.");
+  }
+
+  const worksheetXml = worksheetEntry.getData().toString("utf8");
+  const updatedWorksheetXml = updateWorksheetXml(worksheetXml, updates);
+
+  zip.updateFile("xl/worksheets/sheet1.xml", Buffer.from(updatedWorksheetXml));
+  zip.writeZip(xlsxPath);
 }
 
 async function fillStoreColumn(xlsxPath, storeValue) {
@@ -102,8 +238,9 @@ async function fillStoreColumn(xlsxPath, storeValue) {
 
   let updatedRows = 0;
   const dateColumnNumber = storeColumn.colNumber + 1;
-  const reportDate = getTodayDateOnly();
+  const reportDate = getTodayDateText();
   const ignoredColumns = new Set([storeColumn.colNumber, dateColumnNumber]);
+  const updates = new Map();
 
   for (
     let rowNumber = storeColumn.rowNumber + 1;
@@ -116,17 +253,17 @@ async function fillStoreColumn(xlsxPath, storeValue) {
       continue;
     }
 
-    row.getCell(storeColumn.colNumber).value = storeValue;
+    updates.set(rowNumber, [
+      { colNumber: storeColumn.colNumber, value: storeValue },
+      { colNumber: dateColumnNumber, value: reportDate },
+    ]);
 
-    const dateCell = row.getCell(dateColumnNumber);
-    dateCell.value = reportDate;
-    dateCell.numFmt = "yyyy-mm-dd";
-
-    row.commit();
     updatedRows += 1;
   }
 
-  await workbook.xlsx.writeFile(xlsxPath);
+  if (updatedRows > 0) {
+    writeWorksheetXml(xlsxPath, updates);
+  }
 
   return updatedRows;
 }
