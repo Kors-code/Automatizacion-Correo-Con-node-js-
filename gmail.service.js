@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { google } = require("googleapis");
+const AdmZip = require("adm-zip");
 const { report } = require("process");
 
 const CREDENTIALS_PATH = path.join(__dirname, "credentials.json");
@@ -416,6 +417,7 @@ function collectAttachments(payload, result = []) {
       filename: payload.filename,
       attachmentId: payload.body.attachmentId,
       mimeType: payload.mimeType,
+      size: payload.body.size,
     });
   }
 
@@ -622,7 +624,28 @@ async function getRecentZipMessage(auth, processedIds = []) {
   return fallbackMatch;
 }
 
-async function downloadAttachment(gmail, messageId, attachmentId, outputPath) {
+function assertReadableZip(zipPath, messageId) {
+  try {
+    new AdmZip(zipPath).getEntries();
+  } catch (error) {
+    const invalidZipError = new Error(
+      `Adjunto ZIP corrupto o incompleto (${messageId}): ${error.message}`
+    );
+    invalidZipError.code = "INVALID_ZIP_ATTACHMENT";
+    invalidZipError.messageId = messageId;
+    invalidZipError.zipPath = zipPath;
+    invalidZipError.cause = error;
+    throw invalidZipError;
+  }
+}
+
+async function downloadAttachment(
+  gmail,
+  messageId,
+  attachmentId,
+  outputPath,
+  expectedSize = null
+) {
   const attRes = await gmail.users.messages.attachments.get({
     userId: "me",
     messageId,
@@ -632,8 +655,19 @@ async function downloadAttachment(gmail, messageId, attachmentId, outputPath) {
   const base64Url = attRes.data.data;
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const buffer = Buffer.from(base64, "base64");
+  const declaredSize = Number(expectedSize || attRes.data.size || 0);
 
-  fs.writeFileSync(outputPath, buffer);
+  if (declaredSize > 0 && buffer.length !== declaredSize) {
+    throw new Error(
+      `Descarga incompleta de adjunto Gmail (${messageId}): ${buffer.length}/${declaredSize} bytes`
+    );
+  }
+
+  const tempPath = `${outputPath}.tmp`;
+  fs.writeFileSync(tempPath, buffer);
+  fs.renameSync(tempPath, outputPath);
+
+  assertReadableZip(outputPath, messageId);
   return outputPath;
 }
 
@@ -670,7 +704,8 @@ async function downloadLatestZip(processedIds = []) {
     found.gmail,
     found.messageId,
     found.attachment.attachmentId,
-    zipPath
+    zipPath,
+    found.attachment.size
   );
 
   return {

@@ -429,8 +429,36 @@ async function runOnce() {
   cleanupRuntimeStorage();
 
   const processed = loadProcessed();
+  let result = null;
 
-  const result = await downloadLatestZip(processed);
+  while (!result) {
+    try {
+      const nextResult = await downloadLatestZip(processed);
+
+      if (!nextResult) {
+        break;
+      }
+
+      result = nextResult;
+    } catch (error) {
+      if (error.code !== "INVALID_ZIP_ATTACHMENT" || !error.messageId) {
+        throw error;
+      }
+
+      console.error(error.message);
+      removePathSafely(error.zipPath);
+
+      if (!processed.includes(error.messageId)) {
+        processed.push(error.messageId);
+        await saveProcessed(processed);
+      }
+
+      console.log(
+        "Correo omitido por adjunto ZIP corrupto. Se busca el siguiente correo valido."
+      );
+    }
+  }
+
   if (!result) {
     console.log("No hay ZIP nuevos que coincidan.");
     return;
