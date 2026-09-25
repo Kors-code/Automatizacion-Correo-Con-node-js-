@@ -1,6 +1,7 @@
 const path = require("path");
-const AdmZip = require("adm-zip");
+const fs = require("fs");
 const ExcelJS = require("exceljs");
+const JSZip = require("jszip");
 
 function normalizeHeader(value) {
   return String(value || "")
@@ -201,19 +202,25 @@ function updateWorksheetXml(worksheetXml, updates) {
   );
 }
 
-function writeWorksheetXml(xlsxPath, updates) {
-  const zip = new AdmZip(xlsxPath);
-  const worksheetEntry = zip.getEntry("xl/worksheets/sheet1.xml");
+async function writeWorksheetXml(xlsxPath, updates) {
+  const zip = await JSZip.loadAsync(fs.readFileSync(xlsxPath));
+  const worksheetEntry = zip.file("xl/worksheets/sheet1.xml");
 
   if (!worksheetEntry) {
     throw new Error("No se encontro xl/worksheets/sheet1.xml en el Excel.");
   }
 
-  const worksheetXml = worksheetEntry.getData().toString("utf8");
+  const worksheetXml = await worksheetEntry.async("string");
   const updatedWorksheetXml = updateWorksheetXml(worksheetXml, updates);
+  const buffer = await zip
+    .file("xl/worksheets/sheet1.xml", updatedWorksheetXml)
+    .generateAsync({
+      type: "nodebuffer",
+      compression: "DEFLATE",
+      streamFiles: false,
+    });
 
-  zip.updateFile("xl/worksheets/sheet1.xml", Buffer.from(updatedWorksheetXml));
-  zip.writeZip(xlsxPath);
+  fs.writeFileSync(xlsxPath, buffer);
 }
 
 async function fillStoreColumn(xlsxPath, storeValue) {
@@ -262,7 +269,7 @@ async function fillStoreColumn(xlsxPath, storeValue) {
   }
 
   if (updatedRows > 0) {
-    writeWorksheetXml(xlsxPath, updates);
+    await writeWorksheetXml(xlsxPath, updates);
   }
 
   return updatedRows;
