@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const cron = require("node-cron");
+const ExcelJS = require("exceljs");
 const { downloadLatestZip } = require("./gmail.service");
 const { processZipAndExtractExcel } = require("./zip.service");
 const { fillStoreColumn } = require("./excel-store.service");
@@ -366,6 +367,71 @@ async function fillStoreColumnIfNeeded(localPath, rule) {
   }
 }
 
+function normalizeHeader(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+async function validateOneDriveInventoryExcel(localPath, result) {
+  const rule = result.rule || {};
+
+  if (rule.reportType !== "INVENTORY" || !rule.oneDriveOnly) {
+    return true;
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(localPath);
+
+  const worksheet = workbook.worksheets[0];
+
+  if (!worksheet) {
+    throw new Error("No se encontro una hoja en el Excel de inventario.");
+  }
+
+  const headers = [];
+  const maxHeaderRows = Math.min(10, worksheet.rowCount || 10);
+
+  for (let rowNumber = 1; rowNumber <= maxHeaderRows; rowNumber += 1) {
+    const rowHeaders = [];
+    worksheet.getRow(rowNumber).eachCell((cell) => {
+      rowHeaders.push(normalizeHeader(cell.text || cell.value));
+    });
+
+    if (rowHeaders.includes("store")) {
+      headers.push(...rowHeaders);
+      break;
+    }
+  }
+
+  const requiredHeaders = ["sku code", "final stock", "store"];
+  const missingHeaders = requiredHeaders.filter(
+    (header) => !headers.includes(header)
+  );
+
+  if (missingHeaders.length === 0) {
+    return true;
+  }
+
+  const error = new Error(
+    `Excel omitido: la regla ${rule.key} esperaba inventario, pero el adjunto no tiene estructura de inventario. Faltan columnas: ${missingHeaders.join(
+      ", "
+    )}`
+  );
+
+  error.code = "INVALID_REPORT_ATTACHMENT";
+  error.details = {
+    subject: result.subject,
+    messageId: result.messageId,
+    ruleKey: rule.key,
+    reportType: rule.reportType,
+    excelPath: localPath,
+    headers,
+  };
+
+  throw error;
+}
+
 function removePathSafely(targetPath) {
   if (!targetPath) {
     return;
@@ -481,6 +547,36 @@ async function runOnce() {
 
   if (finalExcel.finalPath) {
     console.log("Excel final:", finalExcel.finalPath);
+    try {
+      await validateOneDriveInventoryExcel(finalExcel.finalPath, result);
+    } catch (error) {
+      writeServerErrorLog("validation", error, {
+        subject: result.subject,
+        messageId: result.messageId,
+        reportType: result.rule.reportType,
+        company: result.rule.company,
+        ruleKey: result.rule.key,
+        excelPath: finalExcel.finalPath,
+        details: error.details || null,
+      });
+
+      if (error.code === "INVALID_REPORT_ATTACHMENT") {
+        console.log(error.message);
+        if (!processed.includes(result.messageId)) {
+          processed.push(result.messageId);
+          await saveProcessed(processed);
+        }
+
+        console.log(
+          "Correo omitido por adjunto incompatible con la regla. No se sube a OneDrive."
+        );
+        cleanupPaths([result.zipPath, finalExcel.extractedDir]);
+        return;
+      }
+
+      throw error;
+    }
+
     await fillStoreColumnIfNeeded(finalExcel.finalPath, result.rule);
 
     let importCompleted = false;
