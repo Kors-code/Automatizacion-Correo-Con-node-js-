@@ -40,7 +40,6 @@ const FILTER_RULES = [
     keywords: ["FINAL", "VENTAS", "75", "DFP"],
     reportType: "SALES",
     mode: "FINAL_MONTH",
-    oneDriveOnly: true,
   },
   {
     key: "FINAL_LDC",
@@ -52,7 +51,6 @@ const FILTER_RULES = [
     keywords: ["FINAL", "VENTAS", "75", "LDC"],
     reportType: "SALES",
     mode: "FINAL_MONTH",
-    oneDriveOnly: true,
   },
   {
     key: "VENTAS_DFP",
