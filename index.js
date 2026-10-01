@@ -16,7 +16,8 @@ const STATE_DIR = path.join(__dirname, "storage", "state");
 const PROCESSED_PATH = path.join(STATE_DIR, "processed.json");
 const LOCK_PATH = path.join(STATE_DIR, "import.lock.json");
 const STALE_LOCK_MS = 1000 * 60 * 30;
-const DEFAULT_ONEDRIVE_SALES_FOLDER = "Documents/test/ventas";
+const DEFAULT_ONEDRIVE_SALES_FOLDER =
+  "Power Bussines Inteligence Sky Free Shop/Power BI Sky Free Shop DATA/POWER BI Commercial/SALES/COL";
 const SERVER_LOG_DIR = path.join(__dirname, "storage", "server-logs");
 const STATE_WRITE_RETRIES = 5;
 const STATE_WRITE_RETRY_MS = 500;

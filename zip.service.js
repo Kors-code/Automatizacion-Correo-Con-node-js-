@@ -174,9 +174,8 @@ function buildFinalExcelName(reportType, company, date = new Date(), mode = null
   const targetDate = mode === "FINAL_MONTH" ? getPreviousMonthDate(date) : date;
   const monthName = getMonthNameES(targetDate.getMonth());
   const year = targetDate.getFullYear();
-  const suffix = mode === "FINAL_MONTH" ? " FINAL" : "";
 
-  return `${reportType} ${company} COLOMBIA ${monthName} ${year}${suffix}.xlsx`;
+  return `${reportType} ${company} COLOMBIA ${monthName} ${year}.xlsx`;
 }
 
 module.exports = {
